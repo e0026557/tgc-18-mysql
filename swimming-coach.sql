@@ -1,6 +1,9 @@
 # Create database
 CREATE DATABASE swimming_coach;
 
+# Use database
+USE swimming_coach;
+
 # Create table for students
 CREATE TABLE students (
   student_id int unsigned auto_increment primary key,
