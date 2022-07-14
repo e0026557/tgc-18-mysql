@@ -52,7 +52,7 @@ CREATE TABLE sessions (
 
 # Create table for locations
 CREATE TABLE locations (
-  location_id int unsigned auto_increment primary key,
+  location_id mediumint unsigned auto_increment primary key,
   name varchar(100) not null,
   address varchar(255) not null
 ) engine = innodb;
@@ -93,3 +93,62 @@ ALTER TABLE payments ADD constraint fk_payments_sessions
 
 ALTER TABLE payments ADD constraint fk_payments_students
   foreign key (student_id) references students(student_id);
+
+
+----------------------------------------------
+
+INSERT INTO parents (
+  name, contact_number, occupation
+) VALUES (
+  "John", "123456789", "Taxi driver"
+);
+
+--- Insert multiple parents
+INSERT INTO parents 
+(name, contact_number, occupation)
+VALUES 
+  ("Mary", "12341234", "Teacher"),
+  ("Snow", "12345123", "Doctor");
+
+INSERT INTO locations (name, address)
+VALUES ('Yishun Swimming Complex', 'Yishun Ave 4');
+
+-- METHOD 1 of Creating a table with a foreign key
+-- Create the table with the foreign key column but not setting it as a foreign key
+CREATE TABLE addresses (
+  address_id int unsigned auto_increment primary key,
+  parent_id int unsigned NOT NULL,
+  block_number varchar(6) NOT NULL,
+  street_name varchar(255) NOT NULL,
+  unit_number varchar(100) NOT NULL,
+  postal_code varchar(10) NOT NULL
+) engine = innodb;
+
+-- Add in the foreign key relationship to the parent_id
+-- ALTER TABLE <table name> ADD CONSTRAINT <name of contraint> FOREIGN KEY (<column of altered table>) REFERENCES <other table name>(<column of other table>)
+-- Another syntax: addresses.parent_id will refer to parents.parent_id
+-- NOTE: The name of the constraint must be UNIQUE throughout the database
+ALTER TABLE addresses ADD CONSTRAINT fk_addresses_parents FOREIGN KEY(parent_id) REFERENCES parents(parent_id)
+
+-- METHOD 2: Create and add foreign key at the same time
+-- Note: mysql will auto create a constraint name for us in this case
+CREATE TABLE students (
+  student_id int unsigned auto_increment primary key,
+  name varchar(100) NOT NULL,
+  date_of_birth DATE NOT NULL,
+  parent_id int unsigned not null,
+  foreign key (parent_id) references parents(parent_id)
+) engine = innodb;
+
+INSERT INTO students (
+  name, date_of_birth, parent_id
+) VALUES (
+  'Sally', '2010-12-22', 1
+);
+
+CREATE TABLE sessions (
+  session_id int unsigned auto_increment primary key,
+  datetime datetime not null,
+  location_id mediumint unsigned not null,
+  foreign key (location_id) references locations(location_id)
+) engine = innodb;
