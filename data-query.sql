@@ -79,4 +79,28 @@ SELECT firstName, lastName, employees.officeCode, city FROM employees JOIN offic
 -- AGGREGATION
 SELECT COUNT(*) FROM customers;
 
+-- Date manipulation
+-- IMPORTANT: Must store the date as one of the date datatypes
+-- 1. date, 2. time, 3. datetime
+-- curdate() gets the current time on the server
+SELECT curdate();
+
+-- now() gets the current date and time on the server
+SELECT now();
+
+-- Surround the ISO date in quotation marks
+-- Show all payments made after 30th June 2003
+SELECT * FROM payments WHERE paymentDate > '2003-06-30';
+
+-- Show all payments between 2003-01-01 and 2003-06-30
+SELECT * FROM payments WHERE paymentDate >= '2003-01-01' AND paymentDate <= '2003-06-30';
+
+SELECT * FROM payments WHERE paymentDate BETWEEN '2003-01-01' AND '2003-06-30';
+
+-- MONTH, YEAR, and DAY functions
+-- To extract the month, year or day from the date datatypes
+-- Display the year where payment is made
+SELECT checkNumber, YEAR(paymentDate), MONTH(paymentDate), DAY(paymentDate) FROM payments WHERE YEAR(paymentDate) = 2003;
+
+
 
