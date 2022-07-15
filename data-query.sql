@@ -146,3 +146,5 @@ JOIN employees ON customers.salesRepEmployeeNumber = employees.employeeNumber
 WHERE salesRepEmployeeNumber = 1504
 GROUP BY country, firstName, lastName, email
 HAVING count(*) > 5
+
+-- SUB-QUERY

@@ -41,6 +41,12 @@ JOIN customers ON payments.customerNumber = customers.customerNumber
 WHERE country = 'USA'
 GROUP BY customerName
 
+-- Grouping by customer number ensures that there are no issues when there are 2 customers with the same name
+SELECT payments.customerNumber, customerName, SUM(amount)
+FROM payments
+JOIN customers ON payments.customerNumber = customers.customerNumber
+GROUP BY payments.customerNumber, customerName
+
 -- 8 - Show how many employees are there for each state in the USA
 SELECT state, COUNT(*) AS 'employee_count'
 FROM employees 
@@ -67,6 +73,12 @@ SELECT productCode, COUNT(*)
 FROM orderdetails
 GROUP BY productCode
 ORDER BY COUNT(*) DESC
+LIMIT 10
+
+SELECT productCode, COUNT(*) AS 'times_ordered'
+FROM orderdetails
+GROUP BY productCode
+ORDER BY times_ordered DESC
 LIMIT 10
 
 -- 12 - Display all orders made between Jan 2003 and Dec 2003
