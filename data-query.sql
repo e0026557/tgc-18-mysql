@@ -76,9 +76,6 @@ WHERE customers.country='USA'
 -- To differentiate which column to show if both tables have the same name
 SELECT firstName, lastName, employees.officeCode, city FROM employees JOIN offices ON employees.officeCode = office.officeCode
 
--- AGGREGATION
-SELECT COUNT(*) FROM customers;
-
 -- Date manipulation
 -- IMPORTANT: Must store the date as one of the date datatypes
 -- 1. date, 2. time, 3. datetime
@@ -103,4 +100,33 @@ SELECT * FROM payments WHERE paymentDate BETWEEN '2003-01-01' AND '2003-06-30';
 SELECT checkNumber, YEAR(paymentDate), MONTH(paymentDate), DAY(paymentDate) FROM payments WHERE YEAR(paymentDate) = 2003;
 
 
+-- AGGREGATION :
+-- COUNT
+-- Get the number of rows in the table
+SELECT COUNT(*) FROM customers;
+
+-- SUM
+-- Sum the values of a column across all the rows
+SELECT SUM(quantityOrdered) FROM orderdetails;
+
+SELECT SUM(quantityOrdered * priceEach) AS "Total order amount" FROM orderdetails;
+
+SELECT COUNT(*) FROM customers
+WHERE salesRepEmployeeNumber IS NOT NULL
+
+SELECT SUM(amount) FROM payments 
+WHERE MONTH(paymentDate) = 6 AND YEAR(paymentDate) = 2003;
+
+-- GROUP BY 
+-- Generate a summary of each group
+-- 1. Figure out the group to categorise the data into
+-- 2. Must select the column that you are grouping by, followed by AGGREGATE function (SUM, AVG, COUNT)
+
+-- Count the number of customers per country
+SELECT country, COUNT(*) FROM customers
+GROUP BY country;
+
+-- Get the average credit limit of customers and number of customers per country
+SELECT country, AVG(creditLimit) AS 'average_credit_limit', COUNT(*) AS 'customer_count' FROM customers
+GROUP BY country;
 
