@@ -1,0 +1,26 @@
+{
+  "name": "tgc-18-mysql",
+  "version": "1.0.0",
+  "description": "To start mysql, in the terminal, type in `mysql -u root`",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/e0026557/tgc-18-mysql.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/e0026557/tgc-18-mysql/issues"
+  },
+  "homepage": "https://github.com/e0026557/tgc-18-mysql#readme",
+  "dependencies": {
+    "express": "^4.18.1",
+    "handlebars-helpers": "^0.10.0",
+    "hbs": "^4.2.0",
+    "mysql2": "^2.3.3",
+    "wax-on": "^1.2.2"
+  }
+}
