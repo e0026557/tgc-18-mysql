@@ -5,7 +5,8 @@ SELECT city, phone, country FROM offices;
 SELECT * FROM orders WHERE comments LIKE '%fedex%';
 
 -- 3 - Show the contact first name and contact last name of all customers in descending order by the customer's name
-SELECT contactFirstName, contactLastName FROM customers
+-- Default sort is by ASC
+SELECT contactFirstName, contactLastName, customerName FROM customers
 ORDER BY customerName DESC;
 
 -- 4 - Find all sales rep who are in office code 1, 2 or 3 and their first name or last name contains the substring 'son'
