@@ -147,4 +147,35 @@ WHERE salesRepEmployeeNumber = 1504
 GROUP BY country, firstName, lastName, email
 HAVING count(*) > 5
 
--- SUB-QUERY
+-- SUB-QUERY (optional)
+-- All SELECT statements return a table
+-- Show the productCode of the product that is ordered the most number of times
+SELECT productCode FROM
+(SELECT productCode, COUNT(*)
+FROM orderdetails
+GROUP BY productCode
+ORDER BY COUNT(*) DESC
+LIMIT 1) AS sub;
+
+-- Find all customers whose credit limit is above the average
+-- Note: When the query returns only a single value, it will be treated as a primitive
+SELECT * FROM customers
+WHERE creditLimit > (
+  SELECT AVG(creditLimit) FROM customers
+);
+
+-- Find all products not ordered before
+-- Note: When the query returns only a single column from multiple rows, it will be an array
+SELECT * FROM products
+WHERE productCode NOT IN 
+(SELECT DISTINCT(productCode) FROM orderdetails);
+
+-- Find sales rep who made at least 10% of payment amount
+SELECT employeeNumber, firstName, lastName, SUM(amount) FROM employees
+JOIN customers ON employees.employeeNumber = customers.salesRepEmployeeNumber
+JOIN payments ON customers.customerNumber = payments.customerNumber
+GROUP BY employees.employeeNumber, firstName, lastName
+HAVING SUM(amount) > (
+  SELECT SUM(amount) * 0.1 FROM payments
+)
+
