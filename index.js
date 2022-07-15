@@ -2,6 +2,7 @@
 const express = require('express');
 const hbs = require('hbs');
 const wax = require('wax-on');
+require('dotenv').config();
 const mysql2 = require('mysql2/promise'); // To use await/async, must use the promise version of mysql2
 
 const app = express();
@@ -16,10 +17,10 @@ app.use(express.urlencoded({
 
 async function main() {
   const connection = await mysql2.createConnection({
-    'host': 'localhost', // 'host' -> IP address of the database server
-    'user': 'root',
-    'database': 'sakila',
-    'password': ''
+    'host': process.env.DB_HOST, // 'host' -> IP address of the database server
+    'user': process.env.DB_USER,
+    'database': process.env.DB_DATABASE,
+    'password': process.env.DB_PASSWORD
   })
 
   app.get('/actors', async function(req, res) {
@@ -42,6 +43,33 @@ async function main() {
 
     res.render('staffs.hbs', {
       staffs
+    })
+  })
+
+  // Create a search engine
+  // USE BINDING TO PREVENT SQL INJECTION
+  // '?' is a placeholder
+  app.get('/search', async function(req, res) {
+    // Define the 'get all results query'
+    let query = 'SELECT * FROM actor WHERE 1';
+    
+    let bindings = []
+
+    // If req.query.name is not falsy
+    if (req.query.first_name) {
+      query += ` AND first_name LIKE ?`
+      bindings.push('%' + req.query.first_name + '%');
+    }
+
+    if (req.query.last_name) {
+      query += ` AND last_name LIKE ?`
+      bindings.push('%' + req.query.last_name + '%');
+    }
+    
+    let [actors] = await connection.execute(query, bindings);
+
+    res.render('search', {
+      'actors': actors
     })
   })
   
