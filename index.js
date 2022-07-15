@@ -22,7 +22,29 @@ async function main() {
     'password': ''
   })
 
-  await connection.execute('SELECT * FROM actor');
+  app.get('/actors', async function(req, res) {
+    // connection.execute returns an array of results
+    // the first element is the table that we selected
+    // the other elements are some housekeeping data
+    const [actors] = await connection.execute('SELECT * FROM actor');
+
+    // alternatively
+    // const results = await connection.execute('SELECT * FROM actor');
+    // const actors = results[0];
+
+    res.render('actors.hbs', {
+      'actors': actors
+    });
+  })
+
+  app.get('/staffs', async function(req, res) {
+    const [staffs] = await connection.execute('SELECT staff_id, first_name, last_name, email FROM staff');
+
+    res.render('staffs.hbs', {
+      staffs
+    })
+  })
+  
 }
 main();
 

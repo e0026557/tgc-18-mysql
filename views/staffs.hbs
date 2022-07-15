@@ -1,0 +1,29 @@
+{{#extends 'base'}}
+
+{{#block 'content'}}
+
+  <table class="table">
+    <thead>
+      <tr>
+        <th>Staff ID</th>
+        <th>First Name</th>
+        <th>Last Name</th>
+        <th>Email</th>
+      </tr>
+    </thead>
+
+    <tbody>
+      {{#each staffs}}
+        <tr>
+          <td>{{this.staff_id}}</td>
+          <td>{{this.first_name}}</td>
+          <td>{{this.last_name}}</td>
+          <td>{{this.email}}</td>
+        </tr>
+      {{/each}}
+    </tbody>
+  </table>
+
+{{/block}}
+
+{{/extends}}
