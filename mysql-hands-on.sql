@@ -33,3 +33,49 @@ products ON orderdetails.productCode = products.productCode;
 SELECT products.*, orderdetails.*
 FROM orderdetails JOIN
 products ON orderdetails.productCode = products.productCode;
+
+-- 7 - Display sum of all the payments made by each company from the USA. 
+SELECT customerName, SUM(amount) AS 'total_payments'
+FROM payments
+JOIN customers ON payments.customerNumber = customers.customerNumber
+WHERE country = 'USA'
+GROUP BY customerName
+
+-- 8 - Show how many employees are there for each state in the USA
+SELECT state, COUNT(*) AS 'employee_count'
+FROM employees 
+JOIN offices ON employees.officeCode = offices.officeCode
+WHERE country = 'USA'
+GROUP BY state
+
+
+-- 9 - From the payments table, display the average amount spent by each customer. Display the name of the customer as well.
+SELECT customerName, AVG(amount)
+FROM payments
+JOIN customers ON payments.customerNumber = customers.customerNumber
+GROUP BY payments.customerNumber, customerName
+
+-- 10 - From the payments table, display the average amount spent by each customer but only if the customer has spent a minimum of 10,000 dollars.
+SELECT customerName, AVG(amount)
+FROM payments
+JOIN customers ON payments.customerNumber = customers.customerNumber
+GROUP BY payments.customerNumber, customerName
+HAVING SUM(amount) >= 10000
+
+-- 11  - For each product, display how many times it was ordered, and display the results with the most orders first and only show the top ten.
+SELECT productCode, COUNT(*)
+FROM orderdetails
+GROUP BY productCode
+ORDER BY COUNT(*) DESC
+LIMIT 10
+
+-- 12 - Display all orders made between Jan 2003 and Dec 2003
+SELECT *
+FROM orders
+WHERE orderDate BETWEEN '2003-01-01' AND '2003-12-31'
+
+-- 13 - Display all the number of orders made, per month, between Jan 2003 and Dec 2003
+SELECT MONTH(orderDate), COUNT(*)
+FROM orders
+WHERE orderDate BETWEEN '2003-01-01' AND '2003-12-31'
+GROUP BY MONTH(orderDate)

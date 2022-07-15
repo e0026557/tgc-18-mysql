@@ -130,3 +130,19 @@ GROUP BY country;
 SELECT country, AVG(creditLimit) AS 'average_credit_limit', COUNT(*) AS 'customer_count' FROM customers
 GROUP BY country;
 
+-- IMPORTANT: WHERE must be used BEFORE GROUP BY
+-- ORDER BY used after GROUP BY
+-- LIMIT happens last
+SELECT country, firstName, lastName, email, AVG(creditLimit), COUNT(*) FROM customers
+JOIN employees ON customers.salesRepEmployeeNumber = employees.employeeNumber
+WHERE salesRepEmployeeNumber = 1504
+GROUP BY country, firstName, lastName, email
+ORDER BY AVG(creditLimit) DESC
+LIMIT 3;
+
+-- HAVING filters the GROUP BY 
+SELECT country, firstName, lastName, email, AVG(creditLimit), COUNT(*) FROM customers
+JOIN employees ON customers.salesRepEmployeeNumber = employees.employeeNumber
+WHERE salesRepEmployeeNumber = 1504
+GROUP BY country, firstName, lastName, email
+HAVING count(*) > 5
