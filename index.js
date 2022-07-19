@@ -49,6 +49,7 @@ async function main() {
   // Create a search engine
   // USE BINDING TO PREVENT SQL INJECTION
   // '?' is a placeholder
+  // -> the replacement is only done on the SQL server
   app.get('/search', async function(req, res) {
     // Define the 'get all results query'
     let query = 'SELECT * FROM actor WHERE 1';
@@ -66,13 +67,56 @@ async function main() {
       bindings.push('%' + req.query.last_name + '%');
     }
     
+    // connection.execute returns an array
     let [actors] = await connection.execute(query, bindings);
 
     res.render('search', {
       'actors': actors
     })
   })
+
+  app.get('/actors/create', async function(req, res) {
+    res.render('create_actor');
+  })
   
+  app.post('/actors/create', async function(req, res) {
+    // sample query
+    // insert into actor (first_name, last_name) values ('fann', 'wong')
+    const query = `insert into actor (first_name, last_name) values (? , ?)`;
+    const bindings = [req.body.first_name, req.body.last_name];
+    await connection.execute(query, bindings);
+    res.redirect('/actors');
+  })
+
+  app.get('/actors/:actor_id/update', async function(req, res) {
+    // select * from actors where actor_id = 1
+    const actorId = parseInt(req.params.actor_id);
+    const query = 'SELECT * FROM actor where actor_id = ?';
+    const [actors] = await connection.execute(query, [actorId]);
+    const actorToUpdate = actors[0]; // since we are only expecting one result, we just take the first index
+
+    res.render('update_actor', {
+      'actor': actorToUpdate
+    })
+
+  })
+
+  app.post('/actors/:actor_id/update', async function(req, res) {
+    if (req.body.first_name.length > 45 || req.body.last_name.length > 45) {
+      res.status(400);
+      res.send("Invalid request");
+      return;
+    }
+
+    // sample query
+    // UPDATE actors SET first_name=?, last_name=? WHERE actor_id = ?;
+    const query = `UPDATE actor SET first_name=?, last_name=? WHERE actor_id = ?`;
+    const bindings = [req.body.first_name, req.body.last_name, parseInt(req.params.actor_id)];
+
+    await connection.execute(query, bindings);
+    res.redirect('/actors');
+  })
+
 }
 main();
 
