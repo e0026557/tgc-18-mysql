@@ -1,0 +1,60 @@
+{{#extends 'base'}}
+
+{{#block 'content'}}
+  <a href="/categories/create" class="btn btn-primary btn">Add category</a>
+  <table class="table">
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th></th>
+      </tr>
+    </thead>
+    <tbody>
+      {{#each categories}}
+      <tr>
+        <td>{{this.name}}</td>
+        <td>
+          <a href="/categories/{{this.category_id}}/update" class="btn btn-primary btn-sm">Update</a>
+          {{!-- <a href="/categories/{{this.category_id}}/delete" class="btn btn-danger btn-sm">Delete</a> --}}
+          <a href="#" data-category-id="{{this.category_id}}" data-name="{{this.name}}" class="delete-btn btn btn-danger btn-sm">Delete</a>
+        </td>
+      </tr>
+      {{/each}}
+    </tbody>
+  </table>
+{{/block}}
+
+{{#block 'js'}}
+  <script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/1.0.0-alpha.1/axios.min.js" integrity="sha512-xIPqqrfvUAc/Cspuj7Bq0UtHNo/5qkdyngx6Vwt+tmbvTLDszzXM0G6c91LXmGrRx8KEPulT+AfOOez+TeVylg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+  <script>
+    const deleteBtns = document.querySelectorAll('.delete-btn');
+    for (let btn of deleteBtns) {
+      btn.addEventListener('click', async function(event) {
+        // Suppress default scrolling behavior of anchor tag 
+        event.preventDefault();
+        console.log(event.target.dataset);
+
+        // Swal2 is the SweetAlert2 object
+        const result = await Swal.fire({
+          title: `Confirm delete ${event.target.dataset.name} ?`,
+          icon: 'error',
+          confirmButtonText: 'Delete',
+          cancelButtonText: 'Cancel',
+          showCloseButton: true,
+          showCancelButton: true
+        })
+
+        // Note: the next line in the function will only execute after the user has clicked on one of the buttons
+        if (result.isConfirmed) {
+          // process delete
+          await axios.post('/categories/' + event.target.dataset.categoryId + '/delete');
+        }
+      })
+    }
+  </script>
+{{/block}}
+
+{{/extends}}

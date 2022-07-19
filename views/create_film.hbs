@@ -1,0 +1,26 @@
+{{#extends 'base'}}
+
+{{#block 'content'}}
+  <form method="post">
+    <div>
+    <label>Title:</label>
+    <input type="text" name="title" class="form-control">
+    </div>
+    <div>
+      <label>Description:</label>
+      <textarea name="description"></textarea>
+    </div>
+    <div>
+      <label>Language:</label>
+      <select name="language_id" class="form-control">
+        {{#each languages}}
+          <option value="{{this.language_id}}">{{this.name}}</option>
+        {{/each}}
+      </select>
+    </div>
+    <input type="submit" value="Submit" class="btn btn-primary mt-3">
+  </form>
+
+{{/block}}
+
+{{/extends}}

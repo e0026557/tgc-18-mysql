@@ -1,0 +1,27 @@
+{{#extends 'base'}}
+
+{{#block 'content'}}
+  <form method="post">
+    <h1>Update film</h1>
+    <div>
+    <label>Title:</label>
+    <input type="text" name="title" class="form-control" value="{{film.title}}">
+    </div>
+    <div>
+      <label>Description:</label>
+      <textarea name="description">{{film.description}}</textarea>
+    </div>
+    <div>
+      <label>Language:</label>
+      <select name="language_id" class="form-control">
+        {{#each languages}}
+          <option value="{{this.language_id}}" {{#eq this.language_id ../film.language_id}}selected{{/eq}}>{{this.name}}</option>
+        {{/each}}
+      </select>
+    </div>
+    <input type="submit" value="Submit" class="btn btn-primary mt-3">
+  </form>
+
+{{/block}}
+
+{{/extends}}

@@ -2,6 +2,9 @@
 const express = require('express');
 const hbs = require('hbs');
 const wax = require('wax-on');
+require('handlebars-helpers')({
+  'handlebars': hbs.handlebars
+});
 require('dotenv').config();
 const mysql2 = require('mysql2/promise'); // To use await/async, must use the promise version of mysql2
 
@@ -21,6 +24,11 @@ async function main() {
     'user': process.env.DB_USER,
     'database': process.env.DB_DATABASE,
     'password': process.env.DB_PASSWORD
+  })
+
+  app.get('/error', async function(req, res) {
+    res.status(500);
+    res.send('An error has occurred')
   })
 
   app.get('/actors', async function(req, res) {
@@ -75,7 +83,7 @@ async function main() {
     })
   })
 
-  app.get('/actors/create', async function(req, res) {
+  app.get('/actors/create', function(req, res) {
     res.render('create_actor');
   })
   
@@ -123,6 +131,126 @@ async function main() {
 
     await connection.execute(query, bindings);
     res.redirect('/actors');
+  })
+
+  // HANDS ON 1
+  // CRUD for category table
+  app.get('/categories', async function(req, res) {
+    // Get all categories
+    const query = `SELECT * FROM category ORDER BY name ASC`
+    let [categories] = await connection.execute(query);
+
+    res.render('categories', {
+      categories: categories
+    })
+  })
+
+  app.get('/categories/create', function(req, res) {
+    res.render('create_category');
+  })
+
+  app.post('/categories/create', async function(req, res) {
+    if (req.body.name.length > 25) {
+      res.status(400);
+      res.send('Invalid category name');
+      return;
+    }
+    const query = `INSERT INTO category (name) VALUES (?)`;
+    await connection.execute(query, [req.body.name]);
+
+    res.redirect('/categories');
+  })
+
+  app.get('/categories/:category_id/update', async function(req, res) {
+    // Get category detail
+    const query = `SELECT * FROM category WHERE category_id = ?`;
+
+    try {
+      const [categories] = await connection.execute(query, [parseInt(req.params.category_id)]);
+  
+      res.render('update_category', {
+        category: categories[0]
+      })
+    }
+    catch(err) {
+      console.log(err);
+      res.redirect('/error')
+    }
+  })
+
+  app.post('/categories/:category_id/update', async function(req, res) {
+    const query = `UPDATE category SET name = ? WHERE category_id = ?`;
+    const bindings = [req.body.name, parseInt(req.params.category_id)];
+
+    await connection.execute(query, bindings);
+
+    res.redirect('/categories');
+  })
+
+  app.get('/categories/:category_id/delete', async function(req, res) {
+    // Get category to be deleted
+    const query = `SELECT * FROM category WHERE category_id = ?`;
+    const [categories] = await connection.execute(query, [parseInt(req.params.category_id)]);
+
+    res.render('delete_category', {
+      category: categories[0]
+    })
+  })
+
+  app.post('/categories/:category_id/delete', async function(req, res) {
+    // Remove all the films which have category_id equal to the one that we are trying to delete
+    const deleteQuery = `DELETE FROM film_category WHERE category_id =?`;
+    await connection.execute(deleteQuery, [parseInt(req.params.category_id)]);
+
+    const query = `DELETE FROM category WHERE category_id = ?`
+    await connection.execute(query, [parseInt(req.params.category_id)]);
+
+    res.redirect('/categories');
+  })
+
+
+  app.get('/films', async function(req, res) {
+    const [films] = await connection.execute(`SELECT film_id, title, description, language.name AS 'language' FROM film JOIN language ON film.language_id = language.language_id`);
+    res.render('films', {
+      films: films
+    })
+  })
+
+  app.get('/films/create', async function(req, res) {
+    const [languages] = await connection.execute(
+      'SELECT * FROM language'
+    );
+    res.render('create_film', {
+      languages: languages
+    })
+  })
+
+  app.post('/films/create', async function(req, res) {
+    const query = `INSERT INTO film (title, description, language_id) VALUES (?, ?, ?)`;
+    const bindings = [req.body.title, req.body.description, parseInt(req.body.language_id)];
+
+    await connection.execute(query, bindings);
+
+    res.redirect('/films');
+  })
+
+  app.get('/films/:film_id/update', async function(req,res) {
+    const [languages] = await connection.execute('SELECT * FROM language');
+    const [films] = await connection.execute('SELECT * FROM film WHERE film_id = ?', [req.params.film_id])
+    const filmToUpdate = films[0];
+    res.render('update_film', {
+      film: filmToUpdate,
+      languages: languages
+    })
+  })
+
+  app.post('/films/:film_id/update', async function(req, res) {
+    // Note: Need to validate form fields first (not shown here)
+    const query = `UPDATE film SET title = ?, description = ?, language_id = ? WHERE film_id = ?`;
+    const bindings = [req.body.title, req.body.description, parseInt(req.body.language_id), parseInt(req.params.film_id)];
+
+    await connection.execute(query, bindings);
+    res.redirect('/films');
   })
 
 }
