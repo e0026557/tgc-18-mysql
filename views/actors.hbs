@@ -20,12 +20,47 @@
           <td>{{this.last_name}}</td>
           <td>
             <a href="/actors/{{this.actor_id}}/update" class="btn btn-primary btn-sm">Update</a>
+            <a href="#" data-actor-id="{{this.actor_id}}" data-actor-name="{{this.first_name}} {{this.last_name}}" class="delete-btn btn btn-danger btn-sm">Delete</a>
           </td>
         </tr>
       {{/each}}
     </tbody>
   </table>
 
+{{/block}}
+
+{{#block 'js'}}
+  <script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+  <script>
+    let deleteBtns = document.querySelectorAll('.delete-btn');
+    for (let btn of deleteBtns) {
+      btn.addEventListener('click', async function(event) {
+        // suppress default behavior of element (a tag in this case)
+        event.preventDefault();
+        console.log(event.target.dataset)
+
+        // Swal is the SweetAlert2 object
+        const result = await Swal.fire({
+          'title': `Confirm delete ${event.target.dataset.actorName} ?`,
+          'icon': 'error',
+          'confirmButtonText': 'Yes delete',
+          'cancelButtonText': 'No cancel',
+          'showCloseButton': true,
+          'showCancelButton': true
+        });
+        // the next line in the function will only execute after the user has clicked one of the buttons
+        if (result.isConfirmed) {
+          // process the delete (the only way to redirect browser to a POST route is by submitting an empty form)
+          const form = document.createElement('form');
+          form.method = 'post'; // <form method='post'> ... </form>
+          form.action = '/actors/' + event.target.dataset.actorId + '/delete';
+          document.querySelector('body').appendChild(form); // Have to connect the invisible form to the body or else there will be an error
+          form.submit(); // submit the form with a function call
+        }
+      })
+    }
+  </script>
 {{/block}}
 
 {{/extends}}
