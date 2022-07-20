@@ -1,0 +1,36 @@
+{{#extends 'base'}}
+
+{{#block 'content'}}
+
+<table class="table">
+  <thead>
+    <tr>
+      <th>Customer ID</th>
+      <th>First name</th>
+      <th>Last name</th>
+      <th>Email</th>
+      <th>Customer address</th>
+      <th>Store address</th>
+      <th></th>
+    </tr>
+  </thead>
+  <tbody>
+    {{#each customers}}
+    <tr>
+      <td>{{this.customer_id}}</td>
+      <td>{{this.first_name}}</td>
+      <td>{{this.last_name}}</td>
+      <td>{{this.email}}</td>
+      <td>{{this.customer_address}}</td>
+      <td>{{this.store_address}}</td>
+      <td>
+        <a href="/customers/{{this.customer_id}}/update" class="btn btn-primary btn-sm">Update</a>
+      </td>
+    </tr>
+    {{/each}}
+  </tbody>
+</table>
+
+{{/block}}
+
+{{/extends}}
